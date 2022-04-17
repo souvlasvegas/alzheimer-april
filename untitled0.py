@@ -88,6 +88,8 @@ def var(x):
     return np.var(x,axis=-1)
 def rms(x):
     return np.sqrt(np.mean(x**2,axis=-1))
+def abs_diff_signal(x):
+    np.sum(np.abs(np.diff(x,axis=-1)),axis=-1)
 def skewness(x):
     return stats.skew(x,axis=-1)
 def kurtosis(x):
@@ -135,6 +137,15 @@ def rms_df(x,pos):
        df.rename(columns={colname:poscol + "_rms"},inplace=True)
     return df
 
+def abs_diff_df(x,pos):
+    arr=abs_diff_signal(x)
+    df=pd.DataFrame(arr)
+    for (colname,colval) in df.iteritems():
+       poscol=pos[colname]
+       df.rename(columns={colname:poscol + "_abs_diff"},inplace=True)
+    return df
+
+
 def skewness_df(x,pos):
     arr=skewness(x)
     df=pd.DataFrame(arr)
@@ -167,9 +178,10 @@ def time_features(x,pos):
     prp=prp_df(x, pos)
     var=var_df(x, pos)
     rms=rms_df(x, pos)
+    abs_diff=abs_diff_df(x,pos)
     skewness=skewness_df(x, pos)
     kurtosis=kurtosis_df(x, pos)
-    features=pd.concat([mean,std,prp,var,rms,skewness,kurtosis], axis=1, ignore_index=False)
+    features=pd.concat([mean,std,prp,var,rms,abs_diff,skewness,kurtosis], axis=1, ignore_index=False)
     return features
 ##############################################################################
 alzheimer_files = []

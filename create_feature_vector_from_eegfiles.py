@@ -16,6 +16,8 @@ import numpy as np
 from mne.time_frequency import psd_welch
 from scipy import stats
 
+import copy
+
 #############################################################################
 #read data functions. We are not using them
 def read_data(file_path):
@@ -50,29 +52,38 @@ def eeg_power_band(epochs,pos):
         Transformed data.
     """
     # specific frequency bands
-    FREQ_BANDS = {"delta": [0.5, 4.5],
+    FREQ_BANDS = {"alpha": [8.5, 11.5],
+                  "delta": [0.5, 4.5],
                   "theta": [4.5, 8.5],
-                  "alpha": [8.5, 11.5],
                   "sigma": [11.5, 15.5],
-                  "beta": [15.5, 30]}
+                  "beta": [15.5, 45]}
 
 
 
     psds, freqs = psd_welch(epochs, picks='eeg', fmin=0.5, fmax=45.)
     # Normalize the PSDs
     psds /= np.sum(psds, axis=-1, keepdims=True)
+    l=psds
+    l = copy.copy(psds)
 
     X = pd.DataFrame()
     for key, values in FREQ_BANDS.items():
         fmin=values[0]
         fmax=values[1]
-        psds_band = psds[:, :, (freqs >= fmin) & (freqs < fmax)].mean(axis=-1)
+        #edw eixan la8os autoi
+        #psds_band = psds[:, :, (freqs >= fmin) & (freqs < fmax)].mean(axis=-1)
+        
+        #anti autoy, auth einai h dior8wsh
+        psds_band = psds[:, :, (freqs >= fmin) & (freqs < fmax)]
+        psds_band=np.sum(psds_band,axis=2)
+        
         psds_band_reshaped=psds_band.reshape(len(psds),-1)
         df=pd.DataFrame(psds_band_reshaped)
         for (colname,colval) in df.iteritems():
            poscol=pos[colname]
            df.rename(columns={colname:poscol + "_" + key},inplace=True)
             
+        dataf=copy.copy(df)
         X=pd.concat([X,df],axis=1)
     return X
 ##############################################################################

@@ -19,6 +19,27 @@ import os
 
 from functools import partial
 
+
+def optimize (params, param_names, x, y, groups):
+    params= dict(zip(param_names,params))
+    model=ensemble.RandomForestClassifier(**params,n_jobs=4)
+    kf=model_selection.LeaveOneGroupOut()
+    accuracies=[]
+    for idx in kf.split(X=x,y=y,groups=groups):
+        train_idx, test_idx= idx[0],idx[1]
+        xtrain= x[train_idx]
+        ytrain= y[train_idx]
+        
+        xtest= x[test_idx]
+        ytest=y[test_idx]
+        
+        model.fit(xtrain,ytrain)
+        preds=model.predict(xtest)
+        fold_acc=metrics.accuracy_score(ytest,preds)
+        accuracies.append(fold_acc)
+        
+    return -1.0* np.mean(accuracies)
+
 file = filedialog.askopenfilename()
 
 df=pd.read_csv(file)
@@ -59,23 +80,4 @@ file_object.write(str(dic))
 file_object.close()
 
 
-def optimize (params, param_names, x, y, groups):
-    params= dict(zip(param_names,params))
-    model=ensemble.RandomForestClassifier(**params)
-    kf=model_selection.LeaveOneGroupOut()
-    accuracies=[]
-    for idx in kf.split(X=x,y=y,groups=groups):
-        train_idx, test_idx= idx[0],idx[1]
-        xtrain= x[train_idx]
-        ytrain= y[train_idx]
-        
-        xtest= x[test_idx]
-        ytest=y[test_idx]
-        
-        model.fit(xtrain,ytrain)
-        preds=model.predict(xtest)
-        fold_acc=metrics.accuracy_score(ytest,preds)
-        accuracies.append(fold_acc)
-        
-    return -1.0* np.mean(accuracies)
 

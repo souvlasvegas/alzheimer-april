@@ -22,7 +22,7 @@ from functools import partial
 
 def optimize (params, param_names, x, y, groups):
     params= dict(zip(param_names,params))
-    model=ensemble.RandomForestClassifier(**params,n_jobs=4)
+    model=ensemble.RandomForestClassifier(**params,n_jobs=-1)
     kf=model_selection.LeaveOneGroupOut()
     accuracies=[]
     for idx in kf.split(X=x,y=y,groups=groups):

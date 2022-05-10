@@ -8,12 +8,13 @@ Created on Mon May  9 16:52:52 2022
 import csv
 import pandas as pd
 import tkinter as tk
+from tkinter import Tk
 from tkinter import filedialog
 import os
 from pathlib import Path
 import numpy as np
 
-
+Tk().withdraw()
 #choose eyes_closed_files
 files = filedialog.askopenfilenames(title="Select all csv's with eyes_closed")
 column_names = ["number", "eyes_closed_bpm"]

@@ -13,12 +13,13 @@ import os
 from pathlib import Path
 import mne
 import numpy as np
+from tkinter import Tk
 from tkinter.filedialog import asksaveasfile
 
 import copy
 
 
-
+Tk().withdraw()
 files = filedialog.askopenfilenames()
 av_df=pd.DataFrame()
 #add every filename in their respective file list
@@ -26,7 +27,6 @@ for file in files:
     df=pd.read_csv(file)
     new=df.mean(axis=0)
     
-
     filename = Path(file).name
     numb=filename.split(")")[0]
     name=filename.split(")")[1].split("_")[0]+"_"+filename.split(")")[1].split("_")[1]

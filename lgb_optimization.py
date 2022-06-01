@@ -99,6 +99,5 @@ result=gp_minimize(
     )
 
 dic=dict(param_names,result.x)
-print(dic)
 file_object.write(str(dic))
 file_object.close()
